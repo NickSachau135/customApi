@@ -2,19 +2,14 @@ const express = require('express')
 const app = express()
 const { menu } = require('./data')
 
-let message = '';
-
 app
   .get('/', (req,res) => {
     res.send('<h1>Homepage</h1><a href="/data">data</a>');
 
   })
   .get('/api/v1/data', (req,res) => {
-    const allCategories = [...new Set(menu.map((item) => item.category))]
-    // res.json(allCategories)
-    
     const breakfast = (menu.filter((item) => {
-        return item.category === 'breakfast' 
+      return item.category === 'breakfast' 
     }))
     const lunch = (menu.filter((item) => {
       return item.category === 'lunch' 
@@ -34,26 +29,26 @@ app
         return item.category.includes(type)
       })
     }
+
     if(limit) {
       sortedProducts = sortedProducts.slice(0, Number(limit))
     }
+
     if(filter === 'dec') {
       sortedProducts.sort((a, b) => b.price - a.price)
-    }
-    else if(filter === 'asc') {
+    }else if(filter === 'asc') {
       sortedProducts.sort((a, b) => a.price - b.price)
     }else if(filter === 'idAsc') {
       sortedProducts.sort((a, b) => a.id - b.id)
     }else if(filter === 'idDec') {
       sortedProducts.sort((a, b) => b.id - a.id)
     }
-    else if(!filter.includes(['idDec', 'idAsc', 'asc', 'dec'])) {
+    else if(filter && !filter.includes(['idDec', 'idAsc', 'asc', 'dec'])) {
+      type && console.log('type is true');
+      !filter && console.log('Filter is false');
+      limit && console.log('limit is true');
       return res.json({results: [], message: 'unregonzied filter property' })
     }
-
-    // if(!Type, !Limit, !FilterPrice) {
-    //   return res.json({ results: [], message: 'Parameter unregonzied. Must have entered it in wrong (Hint: Maybe forgot to capatilize a letter or capatilize a wrong letter'})
-    // }
     
     if(sortedProducts.length < 1) {
       return res.json({ results: [], message: 'Product not found'})
